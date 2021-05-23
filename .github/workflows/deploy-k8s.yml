@@ -27,7 +27,7 @@ jobs:
       uses: matootie/dokube@v1.3.4
       with:
         personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
-        clusterName: do-nyc1-k8s-customer-debts
+        clusterName: k8s-customer-debts
 
     - name: kubectl get nodes
       run: kubectl get nodes
