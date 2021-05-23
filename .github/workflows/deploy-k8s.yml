@@ -22,3 +22,12 @@ jobs:
         tag_with_ref: true
         tag_with_sha: true
         tags: ${{ github.sha }}
+
+    - name: set up kubectl
+      uses: matootie/dokube@v1.3.4
+      with:
+        personalAccessToken: ${{ secrets.DIGITALOCEAN_TOKEN }}
+        clusterName: do-nyc1-k8s-customer-debts
+
+    - name: kubectl get nodes
+      run: kubectl get nodes
