@@ -1,0 +1,44 @@
+name: deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  deploy:
+    name: deploy to cluster
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Check Changes
+      id: changes
+      run: |
+        echo "=============== list changed files ==============="
+        git diff --name-only HEAD^ HEAD
+        
+        echo "========== check paths of changed files =========="
+        git diff --name-only HEAD^ HEAD &gt; files.txt
+        while IFS= read -r file
+        do
+          echo $file
+          if [[ $file != "cloudformation/"* ]]; then
+            echo "This file is not under the directory 'cloudformation'."
+            echo "::set-output name=run_job::false"
+            break
+          else
+            echo "::set-output name=run_job::true"
+          fi
+        done &lt; files.txt
+
+    - name: Validate Changes
+      if: steps.changes.outputs.run_job == 'true'
+      id: validate
+      run: |
+        echo "Changes!!!"
+
