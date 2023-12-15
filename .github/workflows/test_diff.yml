@@ -20,7 +20,7 @@ jobs:
       id: changes
       run: |
         # Obtener la lista de archivos modificados
-        archivos_modificados=$(git diff HEAD^ HEAD)
+        archivos_modificados=$(git diff --name-only -r HEAD^1 HEAD)
 
         # Mostrar la lista de archivos modificados
         echo "Archivos modificados:"
