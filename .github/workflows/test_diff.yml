@@ -19,10 +19,15 @@ jobs:
     - name: Check Changes
       id: changes
       run: |
-        PREVIOUS_COMMIT=$(git rev-parse HEAD^)
+        echo "=============== list changed files ==============="
+      
+        # Obtener el hash del commit anterior o usar HEAD si no hay commit anterior
+        PREVIOUS_COMMIT=$(git rev-parse HEAD^ 2>/dev/null || git rev-parse HEAD)
+        
         git diff --name-only $PREVIOUS_COMMIT HEAD
-    
+        
         echo "========== check paths of changed files =========="
+        
         # Obtener la lista de archivos y guardarla en un archivo
         git diff --name-only $PREVIOUS_COMMIT HEAD > files.txt
         while IFS= read -r file
