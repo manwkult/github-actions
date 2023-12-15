@@ -19,11 +19,12 @@ jobs:
     - name: Check Changes
       id: changes
       run: |
-        echo "=============== list changed files ==============="
-        git diff --name-only HEAD^ HEAD
-        
+        PREVIOUS_COMMIT=$(git rev-parse HEAD^)
+        git diff --name-only $PREVIOUS_COMMIT HEAD
+    
         echo "========== check paths of changed files =========="
-        git diff --name-only HEAD^ HEAD &gt; files.txt
+        # Obtener la lista de archivos y guardarla en un archivo
+        git diff --name-only $PREVIOUS_COMMIT HEAD > files.txt
         while IFS= read -r file
         do
           echo $file
