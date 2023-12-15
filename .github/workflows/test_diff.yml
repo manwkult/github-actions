@@ -19,28 +19,19 @@ jobs:
     - name: Check Changes
       id: changes
       run: |
-        echo "=============== list changed files ==============="
-      
-        # Obtener el hash del commit anterior o usar HEAD si no hay commit anterior
-        PREVIOUS_COMMIT=$(git rev-parse HEAD^ 2>/dev/null || git rev-parse HEAD)
-        
-        git diff --name-only $PREVIOUS_COMMIT HEAD
-        
-        echo "========== check paths of changed files =========="
-        
-        # Obtener la lista de archivos y guardarla en un archivo
-        git diff --name-only $PREVIOUS_COMMIT HEAD > files.txt
-        while IFS= read -r file
-        do
-          echo $file
-          if [[ $file != "cloudformation/"* ]]; then
-            echo "This file is not under the directory 'cloudformation'."
-            echo "::set-output name=run_job::false"
-            break
-          else
-            echo "::set-output name=run_job::true"
-          fi
-        done &lt; files.txt
+        # Obtener la lista de archivos modificados
+        archivos_modificados=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+
+        # Mostrar la lista de archivos modificados
+        echo "Archivos modificados:"
+        echo "$archivos_modificados"
+
+        # Validar si hay cambios en una carpeta específica
+        if echo "$archivos_modificados" | grep -q "cloudformation"; then
+          echo "Se realizaron cambios en la carpeta especificada."
+        else
+          echo "No hay cambios en la carpeta especificada."
+        fi
 
     - name: Validate Changes
       if: steps.changes.outputs.run_job == 'true'
